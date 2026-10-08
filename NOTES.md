@@ -59,4 +59,4 @@ Cursor helped scaffold the MCP server, the Shopify client, and first-pass tests.
 
 Biggest miss: it treated Shopify `search` like it understands buyer intent and wanted to pass "warm winter hoodie under 100" straight through. Live, `search("puffer hoodie")` is zero products. Local catalog scoring is what actually works; Shopify search is just a keyword boost.
 
-Video: _add Loom link here after recording._
+Video: https://www.loom.com/share/3a0dc465fe6445ca8ace41b980da896e
