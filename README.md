@@ -28,7 +28,7 @@ Free Desktop Version or Paid plan. Add a custom connector pointing at `/mcp`.
 
 Settings showing Connected is not enough — in a **new chat**, click **+ → Connectors** and turn **mock.shop** on for that conversation. Then: `I need something warm for winter, under $100.`
 
-You should see a `search_products` call and CA$ prices. If Claude starts interviewing you or searching the web, the connector isn't on for that chat. More on this in [NOTES.md](NOTES.md).
+You should see a `search_products` call and CA$ prices. Claude can still skip the connector on a later turn and answer from Walmart / the web — we can't force every message through MCP. Known limitation in [NOTES.md](NOTES.md).
 
 ## ChatGPT
 

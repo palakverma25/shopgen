@@ -29,7 +29,21 @@ I wasted a bit of time assuming Shopify `search` / `products(query:)` would be e
 - Policy HTML has leftover template notes in it ("clarify to customers…"). That's why store text gets wrapped as data, not instructions.
 - Checkout is fake. Nothing actually gets ordered.
 - `cart.checkoutUrl` from mock.shop is `https://demostore.hydrogen.mock.shop/checkout` with no cart token. That Hydrogen page looks at its own cookie, so API carts always look empty. If the URL has no `/cart/c/` token or `key`, we send people to `/checkout?cart_id=` on this server instead, which loads the Storefront cart and shows the lines.
-- Claude will happily shop the open web instead of this catalog. Happens if the connector is off for that chat, or if it starts interviewing ("what's your budget?", "sweater or hoodie?") and then answers from general knowledge — Carhartt, Champion, Uniqlo, etc. Those multiple-choice chips are Claude's shopping UI, not our tools. I put `openWorldHint: false` on the tools, banned outside retailers in the instructions, mapped "cheaper"/"budget" to under CA$100, and added a `shop` prompt. Still need a new chat with the connector actually toggled on. Easy tell: you should see a `search_products` call and CA$ prices. Interview chips or "Searched the web" means it never hit the store.
+## Known: Claude does not always call the MCP tools
+
+This is a Claude client thing. We cannot force every shopping message through this server.
+
+MCP tools are optional from Claude's side. The model picks whether to call `search_products`, web-search, or just talk. There is no server flag that says "all product questions must hit this connector." `openWorldHint: false`, the shop prompt, and the "don't recommend Walmart / Uniqlo" instructions only apply *after* Claude actually uses the tools. They cannot stop it from skipping MCP.
+
+What that looks like in practice:
+
+- Connector is Connected in Settings, but off for that chat (`+` → Connectors). First message in a new chat often works; the next one, or a later chat, may not.
+- Same chat, same connector still on: one turn hits `search_products` (CA$ from this catalog), the next turn answers from Walmart / Uniqlo / "Searched the web." Disconnecting and reconnecting the connector does not fix that.
+- Multiple-choice chips ("sweater or hoodie?", "who's it for?") are Claude's own shopping UI, not our tools.
+
+I still put `openWorldHint: false` on every tool, banned outside retailers in the server instructions, mapped "cheaper"/"budget" to under CA$100, and added a `shop` prompt. That helps when Claude *does* call us. It does not lock routing.
+
+How to tell: a `search_products` card and CA$ prices means this store. Walmart, Uniqlo, interview chips, or "Searched the web" means Claude never hit `/mcp`. Toggle mock.shop on for that conversation and send again — don't reinstall the connector.
 
 ## Security
 
